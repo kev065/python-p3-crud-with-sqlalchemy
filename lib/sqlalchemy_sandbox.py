@@ -63,5 +63,8 @@ if __name__ == '__main__':
     session.bulk_save_objects([albert_einstein, alan_turing])
     session.commit()
 
-    print(f"New student ID is {albert_einstein.id}.")
-    print(f"New student ID is {alan_turing.id}.")
+    students_by_name = session.query(
+            Student.name).order_by(
+            Student.name).all()
+
+    print(students_by_name)
