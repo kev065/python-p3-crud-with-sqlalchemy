@@ -2,7 +2,8 @@
 
 from datetime import datetime
 
-from sqlalchemy import (create_engine, desc,
+from sqlalchemy import (create_engine, desc, func,
+    CheckConstraint, PrimaryKeyConstraint, UniqueConstraint,
     Index, Column, DateTime, Integer, String)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -63,8 +64,68 @@ if __name__ == '__main__':
     session.bulk_save_objects([albert_einstein, alan_turing])
     session.commit()
 
+    print(f"New student ID is {albert_einstein.id}.")
+    print(f"New student ID is {alan_turing.id}.")
+
+
+    students = session.query(Student)
+    print([student for student in students])
+
+
+    students = session.query(Student).all()
+    print(students)
+
+
+    names = session.query(Student.name).all()
+    print(names)
+
+
     students_by_name = session.query(
             Student.name).order_by(
             Student.name).all()
-
     print(students_by_name)
+
+
+    students_by_grade_desc = session.query(
+            Student.name, Student.grade).order_by(
+            desc(Student.grade)).all()
+    print(students_by_grade_desc)
+
+
+    oldest_student = session.query(
+            Student.name, Student.birthday).order_by(
+            Student.birthday).limit(1).all()
+    print(oldest_student)
+
+
+    oldest_student = session.query(
+            Student.name, Student.birthday).order_by(
+            Student.birthday).first()
+    print(oldest_student)
+
+
+    student_count = session.query(func.count(Student.id)).first()
+    print(student_count)
+
+
+    query = session.query(Student).filter(Student.name.like('%Alan%'),
+        Student.grade == 11).all()
+    for record in query:
+        print(record.name)
+
+
+    
+    for student in session.query(Student):
+        student.grade += 1
+    session.commit()
+    print([(student.name,
+        student.grade) for student in session.query(Student)])
+    
+
+    session.query(Student).update({
+        Student.grade: Student.grade + 1
+    })
+    print([(
+        student.name,
+        student.grade
+    ) for student in session.query(Student)])
