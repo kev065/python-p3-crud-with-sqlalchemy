@@ -61,25 +61,29 @@ if __name__ == '__main__':
         ),
     )
 
+# Read records
     session.bulk_save_objects([albert_einstein, alan_turing])
     session.commit()
 
-    print(f"New student ID is {albert_einstein.id}.")
-    print(f"New student ID is {alan_turing.id}.")
-
-
     students = session.query(Student)
+
     print([student for student in students])
 
 
+    session.bulk_save_objects([albert_einstein, alan_turing])
+    session.commit()
+
     students = session.query(Student).all()
+
     print(students)
 
 
+# Selecting only certain columns
     names = session.query(Student.name).all()
     print(names)
 
 
+# Ordering
     students_by_name = session.query(
             Student.name).order_by(
             Student.name).all()
@@ -92,6 +96,7 @@ if __name__ == '__main__':
     print(students_by_grade_desc)
 
 
+# Limiting
     oldest_student = session.query(
             Student.name, Student.birthday).order_by(
             Student.birthday).limit(1).all()
@@ -104,17 +109,19 @@ if __name__ == '__main__':
     print(oldest_student)
 
 
+# Func
     student_count = session.query(func.count(Student.id)).first()
     print(student_count)
 
 
+# Filtering
     query = session.query(Student).filter(Student.name.like('%Alan%'),
         Student.grade == 11).all()
     for record in query:
         print(record.name)
 
 
-    
+# Updating data    
     for student in session.query(Student):
         student.grade += 1
     session.commit()
@@ -129,3 +136,31 @@ if __name__ == '__main__':
         student.name,
         student.grade
     ) for student in session.query(Student)])
+
+# Deleting data
+    query = session.query(
+        Student).filter(
+            Student.name == "Albert Einstein")
+
+    # retrieve first matching record as object
+    albert_einstein = query.first()
+
+    # delete record
+    session.delete(albert_einstein)
+    session.commit()
+
+    # try to retrieve deleted record
+    albert_einstein = query.first()
+
+    print(albert_einstein)
+
+# Deleting all records
+    query = session.query(
+        Student).filter(
+            Student.name == "Albert Einstein")
+
+    query.delete()
+
+    albert_einstein = query.first()
+
+    print(albert_einstein)
