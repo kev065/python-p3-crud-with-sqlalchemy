@@ -2,8 +2,7 @@
 
 from datetime import datetime
 
-from sqlalchemy import (create_engine, desc, func,
-    CheckConstraint, PrimaryKeyConstraint, UniqueConstraint,
+from sqlalchemy import (create_engine, desc,
     Index, Column, DateTime, Integer, String)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -19,3 +18,8 @@ class Student(Base):
 if __name__ == '__main__':
     engine = create_engine('sqlite:///:memory:')
     Base.metadata.create_all(engine)
+
+    # use our engine to configure a 'Session' class
+    Session = sessionmaker(bind=engine)
+    # use 'Session' class to create 'session' object
+    session = Session()
