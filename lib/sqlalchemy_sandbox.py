@@ -28,6 +28,8 @@ class Student(Base):
 
 # imports, models
 
+# imports, models
+
 if __name__ == '__main__':
 
     engine = create_engine('sqlite:///:memory:')
@@ -47,8 +49,19 @@ if __name__ == '__main__':
         ),
     )
 
-    session.add(albert_einstein)
+    alan_turing = Student(
+        name="Alan Turing",
+        email="alan.turing@sherborne.edu",
+        grade=11,
+        birthday=datetime(
+            year=1912,
+            month=6,
+            day=23
+        ),
+    )
+
+    session.bulk_save_objects([albert_einstein, alan_turing])
     session.commit()
 
     print(f"New student ID is {albert_einstein.id}.")
-
+    print(f"New student ID is {alan_turing.id}.")
